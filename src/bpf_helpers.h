@@ -435,13 +435,13 @@ extern void bpf_iter_num_destroy(struct bpf_iter_num *it) __weak __ksym;
  * this array exists in a custom sub data section which can be resized
  * independently.
  *
- * See RESIZE_ARRAY() for the userspace convenience macro for resizing an
- * array declared with RESIZABLE_ARRAY().
+ * See BPF_RESIZE_ARRAY() for the userspace convenience macro for resizing an
+ * array declared with BPF_RESIZABLE_ARRAY().
  */
-#define RESIZABLE_ARRAY(elfsec, arr) arr[1] SEC("."#elfsec"."#arr)
+#define BPF_RESIZABLE_ARRAY(elfsec, arr) arr[1] SEC("."#elfsec"."#arr)
 
-/**
- * ARRAY_ELEM_PTR - Obtain the verified pointer to an array element
+/*
+ * BPF_ARRAY_ELEM_PTR - Obtain the verified pointer to an array element
  * @arr: array to index into
  * @i: array index
  * @n: number of elements in array
@@ -454,16 +454,16 @@ extern void bpf_iter_num_destroy(struct bpf_iter_num *it) __weak __ksym;
  * size of the array to compute the max, which will result in rejection by
  * the verifier.
  */
-#define ARRAY_ELEM_PTR(arr, i, n) (typeof(arr[i]) *)({	  \
-	u64 __base = (u64)arr;				  \
-	u64 __addr = (u64)&(arr[i]) - __base;		  \
-	asm volatile (					  \
-		"if %0 <= %[max] goto +2\n"		  \
-		"%0 = 0\n"				  \
-		"goto +1\n"				  \
-		"%0 += %1\n"				  \
-		: "+r"(__addr)				  \
-		: "r"(__base),				  \
+#define BPF_ARRAY_ELEM_PTR(arr, i, n) (typeof(arr[i]) *)({	  \
+	u64 __base = (u64)arr;					  \
+	u64 __addr = (u64)&(arr[i]) - __base;			  \
+	asm volatile (						  \
+		"if %0 <= %[max] goto +2\n"		  	  \
+		"%0 = 0\n"					  \
+		"goto +1\n"					  \
+		"%0 += %1\n"					  \
+		: "+r"(__addr)					  \
+		: "r"(__base),					  \
 		  [max]"r"(sizeof(arr[0]) * ((n) - 1)));  \
 	__addr;						  \
 })

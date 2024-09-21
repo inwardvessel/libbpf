@@ -7521,8 +7521,8 @@ enum bpf_kfunc_flags {
 	BPF_F_PAD_ZEROS = (1ULL << 0),
 };
 
-/**
- * RESIZE_ARRAY - Convenience macro for resizing a BPF array
+/*
+ * BPF_RESIZE_ARRAY - Convenience macro for resizing a BPF array
  * @elfsec: the data section of the BPF program in which to the array exists
  * @arr: the name of the array
  * @n: the desired array element count
@@ -7535,7 +7535,7 @@ enum bpf_kfunc_flags {
  * for that custom data section so that it points to the newly memory mapped
  * region.
  */
-#define RESIZE_ARRAY(elfsec, arr, n)						  \
+#define BPF_RESIZE_ARRAY(elfsec, arr, n)					  \
 	do {									  \
 		size_t __sz;							  \
 		bpf_map__set_value_size(skel->maps.elfsec##_##arr,		  \
